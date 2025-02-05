@@ -2,22 +2,21 @@ import express from "express";
 import connectDB from "./config/database.js";
 import sessionRouter from "./routes/session.routes.js";
 import userRouter from "./routes/user.routes.js";
-import initializePassport from "./config/passport.js";
+import initializePassport from "./config/passport.config.js"; 
 
 //settings
 const app = express();
 app.set("PORT", 3000);
-const uri = "mongodb://127.0.0.1:27017/policies";
-
-initializePassport(); 
+const uri = "mongodb://127.0.0.1:27017/user";
 
 // middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+initializePassport(); 
 //routes
 app.get("/", (req, res) => {
-  res.json({ title: "Home Page" });
+  res.json({ title: "Home Page!!" });
 });
 app.use("/session", sessionRouter);
 app.use("/users", userRouter);

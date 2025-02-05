@@ -1,11 +1,11 @@
 import passport from "passport";
-import userModel from "../models/user.model.js";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
+import userModel from "../models/user.model.js";
 
 const cookieExtractor = (req) => {
   let token = null;
   if (req && req.cookies) {
-    token = req.cookies["authCookie"];  
+    token = req.cookies["authCookie"];
   }
   return token;
 };
@@ -24,11 +24,12 @@ const initializePassport = () => {
             return done(null, false, { message: "Token inválido" });
           }
 
-          const user = await userModel.findById(jwt_payload._id).select("-password");  // No devolver la contraseña
+          const user = await userModel.findById(jwt_payload._id).select("-password");
 
           if (!user) {
             return done(null, false, { message: "Usuario no encontrado" });
           }
+
           return done(null, user);
         } catch (error) {
           return done(error, false, { message: "Error interno" });
@@ -37,4 +38,5 @@ const initializePassport = () => {
     )
   );
 };
+
 export default initializePassport;
