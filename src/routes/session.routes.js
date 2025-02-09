@@ -1,6 +1,6 @@
 import { Router } from "express";
 import userModel from "../models/user.model.js";
-import { generateToken } from "../utils/index.js"; 
+import { generateToken } from "../utils/auth.js"; 
 import bcrypt from "bcrypt";
 import passport from "passport";
 
@@ -21,16 +21,17 @@ router.post("/login", async (req, res) => {
     if (!isPasswordValid) {
       return res.status(400).json({ error: "Credenciales no válidas" });
     }
-
     const token = generateToken({ _id: userFound._id, email: userFound.email });
 
-    res.cookie("authCookie", token, { httpOnly: true });
+    res.cookie("authCookie", token, { httpOnly: true, secure: false });
 
     res.status(200).json({ status: "OK", token });
   } catch (error) {
     res.status(500).json({ status: "Error interno", error: error.message });
   }
 });
+
+
 
 router.get(
   "/current",
