@@ -4,15 +4,6 @@ import handlePolicies from "../middlewares/handle-policies.js";
 import passport from "passport";
 const router = Router();
 
-router.get("/", handlePolicies(["ADMIN", "PROFESOR", "USER PREMIUM"]), async (req, res) => {
-  try {
-    const users = await userModel.find();
-    res.status(200).send({ status: "OK", users });
-  } catch (error) {
-    res.status(500).send({ status: "Error interno del servidor", error: error.message });
-  }
-});
-
 
 router.get(
   "/current",
@@ -27,6 +18,19 @@ router.get(
   }
 );
 
+
+
+router.get("/", handlePolicies(["ADMIN", "PROFESOR", "USER PREMIUM"]), async (req, res) => {
+  try {
+    const users = await userModel.find();
+    res.status(200).send({ status: "OK", users });
+  } catch (error) {
+    res.status(500).send({ status: "Error interno del servidor", error: error.message });
+  }
+});
+
+
+
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -40,7 +44,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/register", async (req, res) => {
   const { first_name, last_name, email, password, age } = req.body;
   try {
     const newUser = new userModel({ first_name, last_name, email, password, age });

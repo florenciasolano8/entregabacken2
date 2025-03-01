@@ -23,7 +23,7 @@ initializePassport();
 app.get("/", (req, res) => {
   res.json({ title: "Home Page!!" });
 });
-app.use("/session", sessionRouter);
+app.use("/api/session", sessionRouter);
 
 //listeners
 connectDB(uri);
