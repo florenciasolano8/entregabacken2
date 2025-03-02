@@ -1,7 +1,7 @@
-import CartRepository from "../repositories/CartRepository.js";
-import ProductRepository from "../repositories/ProductRepository.js";
-import TicketRepository from "../repositories/TicketRepository.js";
-import TicketDTO from "../dto/TicketDTO.js";
+import CartRepository from "../repositories/cart.repository.js";
+import ProductRepository from "../repositories/product.repository.js";
+import TicketRepository from "../repositories/ticket.repository.js";
+import TicketDTO from "../dto/ticket.dto.js";
 
 class CartService {
   async createCart() {
@@ -37,7 +37,7 @@ class CartService {
     let purchasedProducts = [];
     let notPurchasedProducts = [];
 
-    // Verificar el stock de cada producto
+    // Verifica el stock de cada producto
     for (const item of cart.products) {
       const product = await ProductRepository.getProductById(item.productId);
 
@@ -52,7 +52,7 @@ class CartService {
           quantity: item.quantity
         });
       } else {
-        // Agregar a productos no comprados
+        // Agrega a productos no comprados
         notPurchasedProducts.push({
           productId: product._id,
           quantity: item.quantity

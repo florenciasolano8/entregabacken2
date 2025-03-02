@@ -1,8 +1,8 @@
 import UserModel from "../models/user.model.js";
 
 class UserDAO {
-  async create(userData) {
-    return await UserModel.create(userData);
+  async create(user) {
+    return await UserModel.create(user);
   }
 
   async findById(id) {
@@ -13,8 +13,8 @@ class UserDAO {
     return await UserModel.findOne({ email }).populate("cart");
   }
 
-  async update(id, userData) {
-    return await UserModel.findByIdAndUpdate(id, userData, { new: true });
+  async update(id, user) {
+    return await UserModel.findByIdAndUpdate(id, user, { new: true });
   }
 
   async delete(id) {

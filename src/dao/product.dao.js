@@ -1,21 +1,20 @@
 import ProductModel from "../models/product.model.js";
 
 class ProductDAO {
-  async create(productData) {
-    return await ProductModel.create(productData);
+  async create(product) {
+    return await ProductModel.create(product);
   }
 
   async findById(id) {
     return await ProductModel.findById(id);
   }
 
-  async findAll({ page = 1, limit = 10, category } = {}) {
-    const query = category ? { category: category.toUpperCase() } : {}; 
-    return await ProductModel.paginate(query, { page, limit });
+  async findAll() {
+    return await ProductModel.find();
   }
 
-  async update(id, productData) {
-    return await ProductModel.findByIdAndUpdate(id, productData, { new: true });
+  async update(id, product) {
+    return await ProductModel.findByIdAndUpdate(id, product, { new: true });
   }
 
   async delete(id) {

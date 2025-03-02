@@ -1,12 +1,11 @@
 import { Router } from "express";
 import ticketController from "../controllers/ticket.controller.js";
-import checkAuthRoles from "../middlewares/roles.middleware.js";
-import { level_2 } from "../config/authProfiles.js";
+import handlePolicies from "../middlewares/handle-policies.js";
+import { ROLES } from "../config/auth.config.js";
 
 const router = Router();
 
-// Obtener todos los tickets 
-router.get("/", checkAuthRoles(level_2), async (req, res) => {
+router.get("/", handlePolicies([ROLES.ADMIN]), async (req, res) => {
   try {
     const allTickets = await ticketController.findAll();
     res.status(200).json({ status: "success", payload: allTickets });
@@ -15,31 +14,39 @@ router.get("/", checkAuthRoles(level_2), async (req, res) => {
   }
 });
 
-// Obtengo un ticket por ID
-router.get("/:id", checkAuthRoles(level_2), async (req, res) => {
+// Obtener un ticket por ID (Solo el usuario que lo creó o ADMIN)
+router.get("/:id", handlePolicies([ROLES.ADMIN, ROLES.USER]), async (req, res) => {
   try {
     const ticket = await ticketController.findById(req.params.id);
     if (!ticket) {
       return res.status(404).json({ status: "error", message: "Ticket no encontrado" });
     }
+
+    // Solo el usuario dueño del ticket o un admin puede verlo
+    if (req.user.role !== ROLES.ADMIN && ticket.purchaser !== req.user.email) {
+      return res.status(403).json({ status: "error", message: "Acceso denegado" });
+    }
+
     res.status(200).json({ status: "success", payload: ticket });
   } catch (e) {
     res.status(500).json({ status: "error", code: 500, message: e.message });
   }
 });
 
-// Crea un nuevo ticket
-router.post("/", async (req, res) => {
+// Crear nuevo ticket (Solo USUARIOS logueados)
+router.post("/", handlePolicies([ROLES.USER]), async (req, res) => {
   try {
-    const newTicket = await ticketController.create(req.body);
+    const newTicketData = { ...req.body, purchaser: req.user.email };
+    const newTicket = await ticketController.create(newTicketData);
+
     res.status(201).json({ status: "success", payload: newTicket });
   } catch (e) {
     res.status(500).json({ status: "error", code: 500, message: e.message });
   }
 });
 
-// Actualizo un ticket por ID
-router.put("/:id", checkAuthRoles(level_2), async (req, res) => {
+// Actualiza un ticket (Solo ADMIN)
+router.put("/:id", handlePolicies([ROLES.ADMIN]), async (req, res) => {
   try {
     const updatedTicket = await ticketController.update(req.params.id, req.body);
     if (!updatedTicket) {
@@ -51,7 +58,8 @@ router.put("/:id", checkAuthRoles(level_2), async (req, res) => {
   }
 });
 
-router.delete("/:id", checkAuthRoles(level_2), async (req, res) => {
+// Elimina un ticket (Solo ADMIN)
+router.delete("/:id", handlePolicies([ROLES.ADMIN]), async (req, res) => {
   try {
     const deletedTicket = await ticketController.delete(req.params.id);
     if (!deletedTicket) {
