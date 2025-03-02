@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 import paginate from "mongoose-paginate-v2";
 
 const productSchema = new Schema({
-    title: {
+    name: {
         index:{name : "idx_title"},
         type: String,
         required: [ true, "El nombre es obligatorio" ],
